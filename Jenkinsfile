@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container on the remote server using SSH
-                    sshagent(['your-ssh-key-id']) {
+                    sshagent(['129d4255-87da-4603-be34-8d23c3d0be0a']) {
                         sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker pull mohammed5253/task:hello"'
                         sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker stop hello-web || true"'
                         sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker rm hello-web || true"'
