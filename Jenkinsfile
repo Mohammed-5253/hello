@@ -19,13 +19,14 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Run the Docker container on the remote server using SSH
-                    sshagent(['129d4255-87da-4603-be34-8d23c3d0be0a']) {
-                        sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker pull mohammed5253/task:hello"'
-                        sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker stop hello-web || true"'
-                        sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker rm hello-web || true"'
-                        sh 'ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker run -d -p 5000:80 --name hello-web mohammed5253/task:hello"'
-                    }
+                    // Install sshpass on the Jenkins agent
+                    sh 'apt-get update && apt-get install -y sshpass'
+
+                    // Run the Docker container on the remote server using SSH with password
+                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker pull mohammed5253/task:hello"'
+                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker stop hello-web || true"'
+                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker rm hello-web || true"'
+                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker run -d -p 5000:80 --name hello-web mohammed5253/task:hello"'
                 }
             }
         }
