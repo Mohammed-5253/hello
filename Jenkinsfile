@@ -5,6 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+                    echo 'Building Docker image...'
                     // Clean up existing Docker container and image
                     sh 'docker stop hello-web || true'
                     sh 'docker rm hello-web || true'
@@ -19,14 +20,24 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Install sshpass on the Jenkins agent
-                    sh 'apt-get update && apt-get install -y sshpass'
+                    echo 'Deploying Docker container via SSH...'
 
-                    // Run the Docker container on the remote server using SSH with password
-                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker pull mohammed5253/task:hello"'
-                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker stop hello-web || true"'
-                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker rm hello-web || true"'
-                    sh 'sshpass -p "apple" ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 "docker run -d -p 5000:80 --name hello-web mohammed5253/task:hello"'
+                    def sshCommand = """
+                        sshpass -p 'apple' ssh -o StrictHostKeyChecking=no -l mkk@192.168.0.107 '
+                            docker pull mohammed5253/task:hello &&
+                            docker stop hello-web || true &&
+                            docker rm hello-web || true &&
+                            docker run -d -p 5000:80 --name hello-web mohammed5253/task:hello
+                        '
+                    """
+
+                    def result = sh(script: sshCommand, returnStatus: true)
+
+                    if (result == 0) {
+                        echo 'SSH connection and deployment successful!'
+                    } else {
+                        error 'Failed to SSH and deploy the container.'
+                    }
                 }
             }
         }
