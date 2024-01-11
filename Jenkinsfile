@@ -16,7 +16,7 @@ pipeline {
                     echo 'Deploying Docker container via SSH...'
 
                     def sshCommand = """
-                        /usr/bin/sshpass -p 'apple' ssh -o StrictHostKeyChecking=no -l mkk@192.168.0.107 '
+                        /usr/bin/sshpass -p 'apple' ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 '
                             docker pull mohammed5253/task:hello &&
                             docker stop hello-web || true &&
                             docker rm hello-web || true &&
