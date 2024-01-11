@@ -6,13 +6,6 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    // Clean up existing Docker container and image
-                    sh 'docker stop hello-web || true'
-                    sh 'docker rm hello-web || true'
-                    sh 'docker rmi mohammed5253/task:hello || true'
-
-                    // Build the Docker image
-                    sh 'docker build -t mohammed5253/task:hello .'
                 }
             }
         }
