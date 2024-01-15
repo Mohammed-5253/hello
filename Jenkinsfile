@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        SSH_KEY = credentials('my_key')  // Set your SSH key credential ID here
+        REMOTE_HOST = '192.168.0.107'
+        REMOTE_USER = 'mkk'
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -16,7 +22,7 @@ pipeline {
                     echo 'Deploying Docker container via SSH...'
 
                     def sshCommand = """
-                        /usr/bin/sshpass -p 'apple' ssh -o StrictHostKeyChecking=no -l mkk 192.168.0.107 '
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${REMOTE_USER}@${REMOTE_HOST} '
                             docker pull mohammed5253/task:hello &&
                             docker stop hello-web || true &&
                             docker rm hello-web || true &&
